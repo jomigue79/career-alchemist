@@ -28,6 +28,7 @@ def get_tailored_cv(cv_text, jd_text):
         {
           "company": "Company Name",
           "role": "Role Name",
+          "period": "Jan 2020 – Dec 2022",
           "bullets": ["bullet 1", "bullet 2", "bullet 3"]
         }
       ]

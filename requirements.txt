@@ -2,3 +2,6 @@ google-genai
 python-dotenv
 streamlit
 pypdf
+Jinja2
+weasyprint
+Pillow

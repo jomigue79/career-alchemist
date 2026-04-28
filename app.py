@@ -5,7 +5,9 @@ from requirement_extractor import extract_requirements
 from match_evaluator import evaluate_match
 from optimizer import get_tailored_cv
 from cover_letter import generate_cover_letter
-from utils import extract_text_from_pdf
+from utils import extract_text_from_pdf, process_headshot
+from pdf_exporter import generate_cv_pdf, render_cv_html
+from cv_parser import parse_cv_sections
 
 # Load environment variables
 load_dotenv()
@@ -35,6 +37,10 @@ if "jd_text" not in st.session_state:
     st.session_state.jd_text = None
 if "match_result" not in st.session_state:
     st.session_state.match_result = None
+if "headshot_data_uri" not in st.session_state:
+    st.session_state.headshot_data_uri = None
+if "cv_sections" not in st.session_state:
+    st.session_state.cv_sections = None
 
 # Sidebar - PM² Governance Info
 st.sidebar.title("🧪 Project Info")
@@ -60,6 +66,24 @@ with col1:
             cv_text = extract_text_from_pdf(uploaded_cv)
             st.session_state.cv_text = cv_text
             st.success("CV uploaded and parsed successfully.")
+            with st.spinner("Extracting CV sections for PDF export..."):
+                try:
+                    st.session_state.cv_sections = parse_cv_sections(cv_text)
+                except RuntimeError as e:
+                    st.warning(f"Could not extract CV sections: {e}")
+        except RuntimeError as e:
+            st.error(str(e))
+
+    uploaded_headshot = st.file_uploader(
+        "Upload Headshot (optional — JPG/PNG)",
+        type=["jpg", "jpeg", "png"],
+        help="Used in the PDF CV template. Max embedded size: ~200 KB."
+    )
+    if uploaded_headshot:
+        try:
+            st.session_state.headshot_data_uri = process_headshot(uploaded_headshot)
+            st.image(uploaded_headshot, width=100, caption="Headshot preview")
+            st.success("Headshot ready for PDF export.")
         except RuntimeError as e:
             st.error(str(e))
 
@@ -172,6 +196,35 @@ if st.session_state.tailored_cv:
         st.markdown(f"**{role.get('role')}** — {role.get('company')}")
         for bullet in role.get("bullets", []):
             st.markdown(f"- {bullet}")
+
+    st.markdown("---")
+    st.subheader("📄 Export CV to PDF")
+    with st.expander("Personalise your CV header (optional)", expanded=False):
+        pdf_name = st.text_input("Full name", key="pdf_name", placeholder="Jane Smith")
+        pdf_title = st.text_input("Job title / tagline", key="pdf_title", placeholder="Senior Data Engineer")
+        pdf_contact = st.text_input("Contact line", key="pdf_contact", placeholder="jane@example.com · +44 7700 900000 · linkedin.com/in/jane")
+
+    if st.button("⬇️ Generate PDF"):
+        with st.spinner("Rendering CV as PDF..."):
+            try:
+                pdf_bytes = generate_cv_pdf(
+                    tailored_cv=st.session_state.tailored_cv,
+                    headshot_data_uri=st.session_state.get("headshot_data_uri"),
+                    candidate_name=st.session_state.get("pdf_name") or "Your Name",
+                    candidate_title=st.session_state.get("pdf_title") or "",
+                    contact_line=st.session_state.get("pdf_contact") or "",
+                    cv_sections=st.session_state.get("cv_sections"),
+                )
+                st.download_button(
+                    label="📥 Download CV as PDF",
+                    data=pdf_bytes,
+                    file_name="tailored_cv.pdf",
+                    mime="application/pdf",
+                )
+            except RuntimeError as e:
+                st.error(f"PDF export failed: {e}")
+            except Exception as e:
+                st.error(f"Unexpected error during PDF export: {e}")
 
 # Cover Letter section
 if st.session_state.jd_analysis and st.session_state.cv_text:

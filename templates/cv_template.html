@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        {{ css | safe }}
+    </style>
+</head>
+<body>
+<div class="cv-page">
+
+    <!-- HEADER -->
+    <table class="header" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="header-text">
+                <div class="cv-name">{{ candidate_name }}</div>
+                {% if candidate_title %}
+                <div class="cv-title">{{ candidate_title }}</div>
+                {% endif %}
+            </td>
+            {% if headshot_uri %}
+            <td class="photo-wrap" rowspan="2">
+                <img src="{{ headshot_uri }}" alt="Profile Photo">
+            </td>
+            {% endif %}
+        </tr>
+        {% if contact_line %}
+        <tr>
+            <td class="cv-contacts">
+                {% for item in contact_line.split('·') %}
+                {% if item.strip() %}
+                <span class="cv-contact-item">{{ item.strip() }}</span>
+                {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <div class="content">
+
+        {% if summary %}
+        <div class="section-title">Executive Summary</div>
+        <p class="summary-text">{{ summary }}</p>
+        {% endif %}
+
+        {% if skills_governance or skills_technical or skills_tools %}
+        <div class="section-title">Core Competencies</div>
+        <div class="skills-grid">
+            {% if skills_governance %}
+            <div class="skill-category">
+                <h4>Governance</h4>
+                <ul class="skill-list">
+                    {% for skill in skills_governance %}
+                    <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if skills_technical %}
+            <div class="skill-category">
+                <h4>Technical</h4>
+                <ul class="skill-list">
+                    {% for skill in skills_technical %}
+                    <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if skills_tools %}
+            <div class="skill-category">
+                <h4>Tools</h4>
+                <ul class="skill-list">
+                    {% for skill in skills_tools %}
+                    <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if experience %}
+        <div class="section-title">Professional Experience</div>
+        {% for role in experience %}
+        <div class="job-block">
+            <div class="job-company-cell">{{ role.company }}</div>
+            <div class="job-role-row">{{ role.role }}{% if role.get('period') %}<span class="job-period"> &nbsp;·&nbsp; {{ role.get('period') }}</span>{% endif %}</div>
+            <ul class="job-bullets">
+                {% for bullet in role.bullets %}
+                <li>{{ bullet }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="bottom-row">
+            {% if certifications %}
+            <div class="bottom-col">
+                <div class="section-title">Certifications</div>
+                {% for cert in certifications %}
+                <div class="cert-item">
+                    {% if cert is mapping %}
+                    <strong>{{ cert.name }}</strong>
+                    <span>{{ cert.get('issuer', '') }}{% if cert.get('date') %} | {{ cert.date }}{% endif %}</span>
+                    {% else %}
+                    <strong>{{ cert }}</strong>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="bottom-col">
+                {% if education %}
+                <div class="section-title">Education</div>
+                {% for item in education %}
+                <div class="edu-block">
+                    <strong>{{ item.degree }}</strong>
+                    <span>{{ item.institution }}{% if item.get('year') %} | {{ item.year }}{% endif %}</span>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                {% if languages %}
+                <div class="section-title" style="margin-top: 14px;">Languages</div>
+                {% for lang in languages %}
+                <div class="lang-item">{{ lang.language }} — {{ lang.level }}</div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+    </div><!-- /content -->
+</div><!-- /cv-page -->
+</body>
+</html>
