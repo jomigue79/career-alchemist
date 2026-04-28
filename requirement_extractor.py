@@ -1,8 +1,9 @@
 import os
-from utils import gemini_client, GEMINI_MODEL
+from utils import get_gemini_client, GEMINI_MODEL
 
 
 def extract_requirements(jd_text):
+    gemini_client = get_gemini_client()
     prompt = f"""
     Act as an expert ATS (Applicant Tracking System) and Technical Recruiter.
     Analyze the following Job Description and extract:

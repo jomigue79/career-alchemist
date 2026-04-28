@@ -1,4 +1,4 @@
-from utils import gemini_client, GEMINI_PRO_MODEL, load_voice_params
+from utils import get_gemini_client, GEMINI_PRO_MODEL, load_voice_params
 
 
 def generate_cover_letter(cv_text, jd_text):
@@ -7,6 +7,7 @@ def generate_cover_letter(cv_text, jd_text):
     written in the user's own voice via the stored Voice Profile.
     Returns a plain markdown string.
     """
+    gemini_client = get_gemini_client()
     voice_context = load_voice_params()
 
     prompt = """

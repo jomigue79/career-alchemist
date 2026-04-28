@@ -1,18 +1,17 @@
 import streamlit as st
-import os
 from dotenv import load_dotenv
 from requirement_extractor import extract_requirements
 from match_evaluator import evaluate_match
 from optimizer import get_tailored_cv
 from cover_letter import generate_cover_letter
-from utils import extract_text_from_pdf
+from utils import extract_text_from_pdf, has_google_api_key
 
 # Load environment variables
 load_dotenv()
 
 # Validate API key on startup
-if not os.getenv("GOOGLE_API_KEY"):
-    st.error("GOOGLE_API_KEY is not set. Please add it to your .env file.")
+if not has_google_api_key():
+    st.error("GOOGLE_API_KEY is not set. Add it to .env or Streamlit secrets.")
     st.stop()
 
 # Page configuration
