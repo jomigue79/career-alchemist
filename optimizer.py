@@ -1,6 +1,6 @@
 import json
 from google.genai import types
-from utils import get_gemini_client, GEMINI_PRO_MODEL, load_voice_params
+from utils import gemini_client, GEMINI_PRO_MODEL, load_voice_params
 
 
 def get_tailored_cv(cv_text, jd_text):
@@ -8,7 +8,6 @@ def get_tailored_cv(cv_text, jd_text):
     Rewrites CV bullet points tailored to a JD using the stored Voice Profile.
     Returns a parsed dict with 'summary' and 'experience' keys.
     """
-    gemini_client = get_gemini_client()
     voice_context = load_voice_params()
 
     prompt = """

@@ -1,76 +1,22 @@
-# The Career Alchemist
+# 🧪 The Career Alchemist: AI-Powered Job Search Intelligence
 
-AI-powered Streamlit app that helps tailor CV content and cover letters to specific job descriptions.
+> **Role:** Lead Developer & Project Manager (Certified PM²)  
+> **Status:** Sprint 1 - Initiating & Planning
 
-## Stack
-- Python
-- Streamlit
-- Google Gemini API
-- pypdf
+## 📌 Executive Summary
+The Career Alchemist is a production-grade AI system that uses **RAG (Retrieval-Augmented Generation)** to transform a baseline CV into a surgically tailored, ATS-optimized application. It maps candidate experience to specific Job Descriptions while preserving a unique professional voice.
 
-## Run Locally
+## 🏗️ Methodology: PM²
+Unlike standard hobbyist projects, this was developed using the **European Commission’s PM² Methodology**.
+* **Governance:** João Correia (PO/PM/Dev)
+* **Lifecycle:** Initiating -> Planning -> Executing -> Closing
+* **Documentation:** [Link to /docs folder](./docs)
 
-1. Create and activate a virtual environment.
-2. Install dependencies:
+## 🛠️ Tech Stack
+* **AI:** Gemini 1.5 Flash (Orchestration)
+* **Backend:** Python / FastAPI
+* **UI:** Streamlit
+* **PDF Engine:** WeasyPrint (HTML/CSS to PDF)
 
-```bash
-pip install -r requirements.txt
-```
-
-3. Add environment variable in a local `.env` file:
-
-```env
-GOOGLE_API_KEY=your_google_api_key_here
-```
-
-4. Start the app:
-
-```bash
-streamlit run app.py
-```
-
-## Publish Option 1: Streamlit Community Cloud (Recommended)
-
-1. Push this repository to GitHub.
-2. Go to Streamlit Community Cloud and create a new app from this repo.
-3. Set:
-	- Main file path: `app.py`
-	- Python dependencies: auto-detected from `requirements.txt`
-4. In app settings, add secret:
-	- Key: `GOOGLE_API_KEY`
-	- Value: your API key
-5. Deploy.
-
-Notes:
-- This repo includes `.streamlit/config.toml` for production-friendly server settings.
-- You can use `.streamlit/secrets.toml.example` as a reference for local secrets format.
-
-## Publish Option 2: Render or Railway
-
-This repo includes a `Procfile`:
-
-```text
-web: streamlit run app.py --server.address=0.0.0.0 --server.port=${PORT:-8501}
-```
-
-Deployment steps are similar on both platforms:
-
-1. Create a new Web Service from this GitHub repo.
-2. Runtime: Python.
-3. Build command:
-
-```bash
-pip install -r requirements.txt
-```
-
-4. Start command: use `Procfile` or paste the same streamlit command.
-5. Set environment variable:
-
-```text
-GOOGLE_API_KEY=your_google_api_key_here
-```
-
-## Troubleshooting
-
-- If you see an API key error at startup, confirm `GOOGLE_API_KEY` is configured in platform secrets/env vars.
-- If deploy succeeds but app fails at runtime, check service logs for missing dependency or invalid key errors.
+## 🚀 Getting Started
+(Instructions on how to run `pip install` and `streamlit run app.py` go here later)

@@ -6,58 +6,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+_api_key = os.getenv("GOOGLE_API_KEY")
+if not _api_key:
+    raise EnvironmentError("GOOGLE_API_KEY is not set in the environment.")
+
+gemini_client = genai.Client(api_key=_api_key)
 GEMINI_MODEL = "gemini-2.5-flash"
 GEMINI_PRO_MODEL = "gemini-2.5-pro"
 
 VOICE_PARAMS_PATH = "data/voice_params.json"
-
-
-def _api_key_from_streamlit_secrets():
-    """Read GOOGLE_API_KEY from Streamlit secrets when available."""
-    try:
-        import streamlit as st
-        return st.secrets.get("GOOGLE_API_KEY")
-    except Exception:
-        return None
-
-
-def _api_key_from_secrets_file():
-    """Read GOOGLE_API_KEY from local .streamlit/secrets.toml when present."""
-    path = ".streamlit/secrets.toml"
-    if not os.path.exists(path):
-        return None
-
-    try:
-        import tomllib
-        with open(path, "rb") as f:
-            data = tomllib.load(f)
-        return data.get("GOOGLE_API_KEY")
-    except Exception:
-        return None
-
-
-def get_google_api_key():
-    """Resolve the API key from environment or Streamlit secrets."""
-    return (
-        os.getenv("GOOGLE_API_KEY")
-        or _api_key_from_streamlit_secrets()
-        or _api_key_from_secrets_file()
-    )
-
-
-def has_google_api_key():
-    """Quick check used by the UI to show setup guidance."""
-    return bool(get_google_api_key())
-
-
-def get_gemini_client():
-    """Create a Gemini client with the configured API key."""
-    api_key = get_google_api_key()
-    if not api_key:
-        raise EnvironmentError(
-            "GOOGLE_API_KEY is not configured. Set it in .env or Streamlit secrets."
-        )
-    return genai.Client(api_key=api_key)
 
 
 def load_voice_params():

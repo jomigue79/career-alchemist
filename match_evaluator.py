@@ -1,6 +1,6 @@
 import json
 from google.genai import types
-from utils import get_gemini_client, GEMINI_MODEL
+from utils import gemini_client, GEMINI_MODEL
 
 
 def evaluate_match(cv_text, jd_text):
@@ -8,7 +8,6 @@ def evaluate_match(cv_text, jd_text):
     Evaluates how well a CV matches a Job Description.
     Returns a parsed dict with score, matched/missing skills, gaps, and recommendation.
     """
-    gemini_client = get_gemini_client()
     prompt = """
     Act as an expert ATS analyst and Senior Recruiter.
 
