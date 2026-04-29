@@ -27,10 +27,10 @@
         {% if contact_line %}
         <tr>
             <td class="cv-contacts">
-                {% for item in contact_line.split('·') %}
-                {% if item.strip() %}
-                <span class="cv-contact-item">{{ item.strip() }}</span>
-                {% endif %}
+                {% set items = contact_line.split('·') | map('trim') | select | list %}
+                {% for item in items %}
+                <span class="cv-contact-item">{{ item }}</span>
+                {% if not loop.last %}<span class="cv-contact-sep">•</span>{% endif %}
                 {% endfor %}
             </td>
         </tr>
