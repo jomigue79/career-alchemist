@@ -10,7 +10,17 @@ load_dotenv()
 
 _api_key = os.getenv("GOOGLE_API_KEY")
 if not _api_key:
-    raise EnvironmentError("GOOGLE_API_KEY is not set in the environment.")
+    raise EnvironmentError(
+        "GOOGLE_API_KEY is not set. "
+        "Add it to your .env file locally, or to Streamlit Cloud Secrets as: "
+        'GOOGLE_API_KEY = "your-key-here"'
+    )
+
+if not _api_key.startswith("AIza"):
+    raise EnvironmentError(
+        "GOOGLE_API_KEY appears invalid (expected format: AIza...). "
+        "Check your .env file or Streamlit Cloud Secrets."
+    )
 
 gemini_client = genai.Client(api_key=_api_key)
 GEMINI_MODEL = "gemini-2.5-flash"

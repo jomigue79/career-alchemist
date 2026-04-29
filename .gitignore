@@ -137,6 +137,11 @@ celerybeat.pid
 # Environments
 .env
 .envrc
+
+# Career Alchemist generated artifacts
+test_preview.html
+test_output.pdf
+data/targets/analysis_*.md
 .venv
 env/
 venv/

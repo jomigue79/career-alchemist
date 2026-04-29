@@ -1,3 +1,16 @@
+"""
+match_evaluator.py
+Scores how well a candidate's CV matches a given Job Description using Gemini.
+
+Returns a structured dict with:
+  - overall_score (0-100)
+  - hard_skills / soft_skills: matched and missing lists
+  - qualifications: met and gaps lists
+  - strengths: 2-3 sentence summary of strongest alignment
+  - recommendation: one of Apply immediately | Strong fit | Needs gaps addressed | Stretch role
+
+Triggered automatically after JD analysis if a CV is already loaded.
+"""
 import json
 from google.genai import types
 from utils import gemini_client, GEMINI_MODEL

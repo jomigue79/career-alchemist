@@ -1,13 +1,36 @@
+"""
+app.py
+Main Streamlit application for Career Alchemist.
+
+Flow:
+  1. User uploads their baseline CV (PDF) and an optional headshot.
+  2. User pastes a Job Description — the app extracts requirements and scores
+     the CV-JD match automatically via Gemini.
+  3. User generates a tailored CV (PDF-exportable) and a cover letter (PDF-exportable),
+     both written in the candidate's personal voice profile.
+
+AI agents used:
+  - Analyst    (requirement_extractor)  — parses the JD into structured requirements
+  - Evaluator  (match_evaluator)        — scores CV vs JD match with gap analysis
+  - Optimizer  (optimizer)              — rewrites CV bullets tailored to the JD
+  - Writer     (cover_letter)           — generates a structured 4-paragraph cover letter
+"""
 import streamlit as st
 import os
+import re
 from dotenv import load_dotenv
 from requirement_extractor import extract_requirements
 from match_evaluator import evaluate_match
 from optimizer import get_tailored_cv
 from cover_letter import generate_cover_letter
 from utils import extract_text_from_pdf, process_headshot
-from pdf_exporter import generate_cv_pdf, render_cv_html
+from pdf_exporter import generate_cv_pdf, render_cv_html, generate_cover_letter_pdf
 from cv_parser import parse_cv_sections
+
+
+def _slugify(text: str) -> str:
+    """Convert arbitrary text to a safe lowercase filename segment."""
+    return re.sub(r'[^a-z0-9]+', '_', text.lower()).strip('_')
 
 # Load environment variables
 load_dotenv()
@@ -203,6 +226,7 @@ if st.session_state.tailored_cv:
         pdf_name = st.text_input("Full name", key="pdf_name", placeholder="Jane Smith")
         pdf_title = st.text_input("Job title / tagline", key="pdf_title", placeholder="Senior Data Engineer")
         pdf_contact = st.text_input("Contact line", key="pdf_contact", placeholder="jane@example.com · +44 7700 900000 · linkedin.com/in/jane")
+        pdf_company = st.text_input("Target company (for filename)", key="pdf_company", placeholder="EA, Google, Accenture...")
 
     if st.button("⬇️ Generate PDF"):
         with st.spinner("Rendering CV as PDF..."):
@@ -215,10 +239,15 @@ if st.session_state.tailored_cv:
                     contact_line=st.session_state.get("pdf_contact") or "",
                     cv_sections=st.session_state.get("cv_sections"),
                 )
+                name_slug = _slugify(st.session_state.get('pdf_name') or 'cv')
+                title_slug = _slugify(st.session_state.get('pdf_title') or '')
+                company_slug = _slugify(st.session_state.get('pdf_company') or '')
+                parts = [p for p in [name_slug, title_slug, company_slug] if p]
+                pdf_filename = '_'.join(parts) + '.pdf'
                 st.download_button(
                     label="📥 Download CV as PDF",
                     data=pdf_bytes,
-                    file_name="tailored_cv.pdf",
+                    file_name=pdf_filename,
                     mime="application/pdf",
                 )
             except RuntimeError as e:
@@ -246,6 +275,29 @@ if st.session_state.cover_letter:
     st.subheader("Your Cover Letter")
     st.markdown(st.session_state.cover_letter)
     st.text_area("Copy-ready version", value=st.session_state.cover_letter, height=400)
+
+    cl_name = st.session_state.get("pdf_name") or ""
+    cl_company = st.session_state.get("pdf_company") or ""
+    cl_title = st.session_state.get("pdf_title") or ""
+    if st.button("⬇️ Download Cover Letter as PDF"):
+        with st.spinner("Rendering cover letter as PDF..."):
+            try:
+                cl_parts = [p for p in [_slugify(cl_name), _slugify(cl_title), _slugify(cl_company)] if p]
+                cl_filename = ('_'.join(cl_parts) or 'cover_letter') + '_cover_letter.pdf'
+                cl_pdf = generate_cover_letter_pdf(
+                    cover_letter_text=st.session_state.cover_letter,
+                    candidate_name=cl_name,
+                )
+                st.download_button(
+                    label="📥 Save Cover Letter PDF",
+                    data=cl_pdf,
+                    file_name=cl_filename,
+                    mime="application/pdf",
+                )
+            except RuntimeError as e:
+                st.error(f"Cover letter PDF export failed: {e}")
+            except Exception as e:
+                st.error(f"Unexpected error: {e}")
 
 # Footer/Status Bar
 st.markdown("---")

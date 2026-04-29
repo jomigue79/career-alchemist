@@ -1,3 +1,14 @@
+"""
+cover_letter.py
+Generates a tailored cover letter using Gemini Pro, written in the
+candidate's personal voice as defined in data/voice_params.json.
+
+Output is plain text (no markdown) structured in 4 paragraphs:
+  1. The Hook       — enthusiasm + seniority statement
+  2. Why Me (1)     — primary JD requirement mapped to CV evidence
+  3. Why Me (2)     — secondary JD requirement mapped to CV evidence
+  4. The Close      — confident, professional sign-off
+"""
 from utils import gemini_client, GEMINI_PRO_MODEL, load_voice_params
 
 

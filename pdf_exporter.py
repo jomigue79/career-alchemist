@@ -124,3 +124,55 @@ def generate_cv_pdf(
         return pdf_bytes
     except Exception as exc:
         raise RuntimeError(f"PDF generation failed: {exc}") from exc
+
+
+def generate_cover_letter_pdf(
+    cover_letter_text: str,
+    candidate_name: str = "",
+) -> bytes:
+    """
+    Wraps cover letter plain text in minimal HTML and converts to PDF.
+
+    Returns:
+        PDF as bytes, suitable for st.download_button.
+    """
+    try:
+        from weasyprint import HTML
+    except Exception as exc:
+        raise RuntimeError(
+            "WeasyPrint is not available. Install the GTK+ runtime on Windows."
+        ) from exc
+
+    # Escape the text and convert newlines to <br> / paragraphs
+    import html as html_lib
+    escaped = html_lib.escape(cover_letter_text)
+    paragraphs = "".join(
+        f"<p>{para.strip()}</p>"
+        for para in escaped.split("\n\n")
+        if para.strip()
+    )
+
+    html_string = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        @page {{ size: A4; margin: 25mm 20mm; }}
+        body {{ font-family: Georgia, serif; font-size: 11pt; color: #222; line-height: 1.6; }}
+        h1 {{ font-size: 13pt; margin-bottom: 4px; color: #1a2a3a; }}
+        hr {{ border: none; border-top: 1px solid #ccc; margin: 8px 0 20px 0; }}
+        p {{ margin: 0 0 12px 0; text-align: justify; }}
+      </style>
+    </head>
+    <body>
+      {'<h1>' + html_lib.escape(candidate_name) + '</h1><hr>' if candidate_name else ''}
+      {paragraphs}
+    </body>
+    </html>
+    """
+
+    try:
+        return HTML(string=html_string).write_pdf()
+    except Exception as exc:
+        raise RuntimeError(f"Cover letter PDF generation failed: {exc}") from exc

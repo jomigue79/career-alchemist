@@ -1,3 +1,16 @@
+"""
+requirement_extractor.py
+Parses a Job Description using Gemini Flash and returns a structured
+Markdown summary of requirements for display in the app.
+
+Extracts:
+  - Top 10 hard skills / keywords
+  - Top 5 soft skills
+  - Minimum qualifications (years of experience, certifications)
+  - Critical success factors (what the role actually prioritises)
+
+Also runnable as a standalone script to batch-process JD files in data/targets/.
+"""
 import os
 from utils import gemini_client, GEMINI_MODEL
 

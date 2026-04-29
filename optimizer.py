@@ -1,3 +1,19 @@
+"""
+optimizer.py
+Rewrites the CV's Professional Summary and Experience section using Gemini Pro,
+tailored to a specific Job Description and the candidate's stored Voice Profile.
+
+Process (internal to the prompt):
+  1. JD Analysis  — identify role type, extract top 5-7 keywords, map to CV
+  2. Rewrite      — produce Action+Context+Result bullets using JD vocabulary
+
+Strict anti-hallucination rules are enforced:
+  - No invented metrics or team sizes
+  - No summing of years across different roles
+  - Only skills/certs explicitly present in the baseline CV
+
+Returns a dict: { "summary": str, "experience": [{ company, role, period, bullets }] }
+"""
 import json
 from google.genai import types
 from utils import gemini_client, GEMINI_PRO_MODEL, load_voice_params
