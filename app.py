@@ -5,7 +5,7 @@ Main Streamlit application for Career Alchemist.
 Flow:
   1. User uploads their baseline CV (PDF) and an optional headshot.
   2. User pastes a Job Description — the app extracts requirements and scores
-     the CV-JD match automatically via Groq / Llama 3.3.
+     the CV-JD match automatically via Gemini.
   3. User generates a tailored CV (PDF-exportable) and a cover letter (PDF-exportable),
      both written in the candidate's personal voice profile.
 
@@ -36,8 +36,8 @@ def _slugify(text: str) -> str:
 load_dotenv()
 
 # Validate API key on startup
-if not os.getenv("GROQ_API_KEY"):
-    st.error("GROQ_API_KEY is not set. Please add it to your .env file.")
+if not os.getenv("GOOGLE_API_KEY"):
+    st.error("GOOGLE_API_KEY is not set. Please add it to your .env file.")
     st.stop()
 
 # Page configuration
@@ -301,4 +301,4 @@ if st.session_state.cover_letter:
 
 # Footer/Status Bar
 st.markdown("---")
-st.caption("Career Alchemist | Powered by Groq · Llama 3.3 70B · PM² Framework")
+st.caption("Career Alchemist | Powered by Gemini 2.5 Flash & PM² Framework")

@@ -12,7 +12,7 @@ Extracts:
 Also runnable as a standalone script to batch-process JD files in data/targets/.
 """
 import os
-from utils import groq_client, GROQ_MODEL
+from utils import gemini_client, GEMINI_MODEL
 
 
 def extract_requirements(jd_text):
@@ -31,13 +31,10 @@ def extract_requirements(jd_text):
     """
 
     try:
-        response = groq_client.chat.completions.create(
-            model=GROQ_MODEL,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return response.choices[0].message.content
+        response = gemini_client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+        return response.text
     except Exception as e:
-        raise RuntimeError(f"Groq API error during requirements extraction: {e}") from e
+        raise RuntimeError(f"Gemini API error during requirements extraction: {e}") from e
 
 if __name__ == "__main__":
     target_path = "data/targets/"

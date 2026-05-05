@@ -3,27 +3,28 @@ import io
 import json
 import base64
 import pypdf
-from groq import Groq
+from google import genai
 from dotenv import load_dotenv
 
 load_dotenv()
 
-_api_key = os.getenv("GROQ_API_KEY")
+_api_key = os.getenv("GOOGLE_API_KEY")
 if not _api_key:
     raise EnvironmentError(
-        "GROQ_API_KEY is not set. "
+        "GOOGLE_API_KEY is not set. "
         "Add it to your .env file locally, or to Streamlit Cloud Secrets as: "
-        'GROQ_API_KEY = "your-key-here"'
+        'GOOGLE_API_KEY = "your-key-here"'
     )
 
-if not _api_key.startswith("gsk_"):
+if not _api_key.startswith("AIza"):
     raise EnvironmentError(
-        "GROQ_API_KEY appears invalid (expected format: gsk_...). "
+        "GOOGLE_API_KEY appears invalid (expected format: AIza...). "
         "Check your .env file or Streamlit Cloud Secrets."
     )
 
-groq_client = Groq(api_key=_api_key)
-GROQ_MODEL = "llama-3.3-70b-versatile"
+gemini_client = genai.Client(api_key=_api_key)
+GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_PRO_MODEL = "gemini-2.5-pro"
 
 VOICE_PARAMS_PATH = "data/voice_params.json"
 
