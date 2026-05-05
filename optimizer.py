@@ -60,7 +60,8 @@ IMPORTANT: Begin your response immediately with `{`. Do not echo, repeat, or out
                 {"role": "user", "content": user_content}
             ],
             response_format={"type": "json_object"},
-            temperature=0
+            temperature=0,
+            max_tokens=4096
         )
     except Exception as e:
         raise RuntimeError(f"Groq API error during CV optimization: {e}") from e
