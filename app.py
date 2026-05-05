@@ -5,7 +5,7 @@ Main Streamlit application for Career Alchemist.
 Flow:
   1. User uploads their baseline CV (PDF) and an optional headshot.
   2. User pastes a Job Description — the app extracts requirements and scores
-     the CV-JD match automatically via Gemini.
+     the CV-JD match automatically via Groq / Llama 3.3.
   3. User generates a tailored CV (PDF-exportable) and a cover letter (PDF-exportable),
      both written in the candidate's personal voice profile.
 
@@ -301,4 +301,4 @@ if st.session_state.cover_letter:
 
 # Footer/Status Bar
 st.markdown("---")
-st.caption("Career Alchemist | Powered by Gemini 2.5 Flash & PM² Framework")
+st.caption("Career Alchemist | Powered by Groq · Llama 3.3 70B · PM² Framework")

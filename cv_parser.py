@@ -6,8 +6,7 @@ the PDF — they are not rewritten by the optimizer.
 """
 
 import json
-from google.genai import types
-from utils import gemini_client, GEMINI_MODEL
+from utils import groq_client, GROQ_MODEL
 
 
 def parse_cv_sections(cv_text: str) -> dict:
@@ -55,18 +54,16 @@ def parse_cv_sections(cv_text: str) -> dict:
     """ + cv_text
 
     try:
-        response = gemini_client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json"
-            )
+        response = groq_client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"}
         )
     except Exception as e:
-        raise RuntimeError(f"Gemini API error during CV parsing: {e}") from e
+        raise RuntimeError(f"Groq API error during CV parsing: {e}") from e
 
     try:
-        data = json.loads(response.text)
+        data = json.loads(response.choices[0].message.content)
     except json.JSONDecodeError as e:
         raise RuntimeError(f"Failed to parse CV sections response as JSON: {e}") from e
 

@@ -15,8 +15,7 @@ Strict anti-hallucination rules are enforced:
 Returns a dict: { "summary": str, "experience": [{ company, role, period, bullets }] }
 """
 import json
-from google.genai import types
-from utils import gemini_client, GEMINI_PRO_MODEL, load_voice_params
+from utils import groq_client, GROQ_MODEL, load_voice_params
 
 
 def get_tailored_cv(cv_text, jd_text):
@@ -80,17 +79,15 @@ def get_tailored_cv(cv_text, jd_text):
     """ + str(voice_context)
 
     try:
-        response = gemini_client.models.generate_content(
-            model=GEMINI_PRO_MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json"
-            )
+        response = groq_client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"}
         )
     except Exception as e:
-        raise RuntimeError(f"Gemini API error during CV optimization: {e}") from e
+        raise RuntimeError(f"Groq API error during CV optimization: {e}") from e
 
     try:
-        return json.loads(response.text)
+        return json.loads(response.choices[0].message.content)
     except json.JSONDecodeError as e:
         raise RuntimeError(f"Failed to parse AI response as JSON: {e}") from e
