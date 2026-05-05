@@ -42,7 +42,8 @@ Return ONLY valid JSON (no markdown, no explanation) with exactly this structure
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_content}
             ],
-            response_format={"type": "json_object"}
+            response_format={"type": "json_object"},
+            temperature=0
         )
     except Exception as e:
         raise RuntimeError(f"Groq API error during match evaluation: {e}") from e

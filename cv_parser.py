@@ -51,7 +51,8 @@ Rules:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": cv_text}
             ],
-            response_format={"type": "json_object"}
+            response_format={"type": "json_object"},
+            temperature=0
         )
     except Exception as e:
         raise RuntimeError(f"Groq API error during CV parsing: {e}") from e
