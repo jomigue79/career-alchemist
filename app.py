@@ -36,8 +36,8 @@ def _slugify(text: str) -> str:
 load_dotenv()
 
 # Validate API key on startup
-if not os.getenv("GOOGLE_API_KEY"):
-    st.error("GOOGLE_API_KEY is not set. Please add it to your .env file.")
+if not os.getenv("GROQ_API_KEY"):
+    st.error("GROQ_API_KEY is not set. Please add it to your .env file.")
     st.stop()
 
 # Page configuration
