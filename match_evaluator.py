@@ -31,7 +31,8 @@ Return ONLY valid JSON (no markdown, no explanation) with exactly this structure
   "qualifications": {"met": ["requirement1"], "gaps": ["requirement2"]},
   "strengths": "<2-3 sentence summary of the strongest alignment points>",
   "recommendation": "<one of: Apply immediately | Strong fit | Needs gaps addressed | Stretch role>"
-}"""
+}
+IMPORTANT: Begin your response immediately with `{`. Do not echo, repeat, or output any input text before the JSON."""
 
     user_content = "===CANDIDATE CV===\n" + cv_text + "\n\n===JOB DESCRIPTION===\n" + jd_text
 

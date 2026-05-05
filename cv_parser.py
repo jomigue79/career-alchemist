@@ -42,7 +42,8 @@ Rules:
 - Only include information explicitly stated in the CV. Do NOT invent or infer.
 - Classify skills: governance=methodologies/frameworks/processes, technical=programming/data/AI/engineering, tools=software/platforms.
 - If a category has no items, return an empty list [].
-- All four top-level keys must always be present."""
+- All four top-level keys must always be present.
+- IMPORTANT: Begin your response immediately with `{`. Do not echo, repeat, or output any input text before the JSON."""
 
     try:
         response = groq_client.chat.completions.create(

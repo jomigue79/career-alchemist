@@ -44,8 +44,8 @@ Return ONLY valid JSON (no markdown, no explanation) with this exact structure:
       "bullets": ["bullet 1", "bullet 2", "bullet 3"]
     }
   ]
-}"""
-
+}
+IMPORTANT: Begin your response immediately with `{`. Do not echo, repeat, or output any input text before the JSON."""
     user_content = (
         "===BASELINE CV (ground truth — do not invent beyond this)===\n" + cv_text
         + "\n\n===TARGET JOB DESCRIPTION===\n" + jd_text
