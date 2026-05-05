@@ -15,7 +15,16 @@ Strict anti-hallucination rules are enforced:
 Returns a dict: { "summary": str, "experience": [{ company, role, period, bullets }] }
 """
 import json
+import re
 from utils import groq_client, GROQ_MODEL, load_voice_params
+
+
+def _extract_json(text: str) -> dict:
+    """Extract the first complete JSON object from a string, tolerating any preamble."""
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if not match:
+        raise ValueError("No JSON object found in response")
+    return json.loads(match.group())
 
 
 def get_tailored_cv(cv_text, jd_text):
@@ -59,7 +68,6 @@ IMPORTANT: Begin your response immediately with `{`. Do not echo, repeat, or out
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_content}
             ],
-            response_format={"type": "json_object"},
             temperature=0,
             max_tokens=4096
         )
@@ -67,6 +75,6 @@ IMPORTANT: Begin your response immediately with `{`. Do not echo, repeat, or out
         raise RuntimeError(f"Groq API error during CV optimization: {e}") from e
 
     try:
-        return json.loads(response.choices[0].message.content)
-    except json.JSONDecodeError as e:
+        return _extract_json(response.choices[0].message.content)
+    except (ValueError, json.JSONDecodeError) as e:
         raise RuntimeError(f"Failed to parse AI response as JSON: {e}") from e

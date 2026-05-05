@@ -6,7 +6,16 @@ the PDF — they are not rewritten by the optimizer.
 """
 
 import json
+import re
 from utils import groq_client, GROQ_MODEL
+
+
+def _extract_json(text: str) -> dict:
+    """Extract the first complete JSON object from a string, tolerating any preamble."""
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if not match:
+        raise ValueError("No JSON object found in response")
+    return json.loads(match.group())
 
 
 def parse_cv_sections(cv_text: str) -> dict:
@@ -52,7 +61,6 @@ Rules:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": cv_text}
             ],
-            response_format={"type": "json_object"},
             temperature=0,
             max_tokens=2048
         )
@@ -60,8 +68,8 @@ Rules:
         raise RuntimeError(f"Groq API error during CV parsing: {e}") from e
 
     try:
-        data = json.loads(response.choices[0].message.content)
-    except json.JSONDecodeError as e:
+        data = _extract_json(response.choices[0].message.content)
+    except (ValueError, json.JSONDecodeError) as e:
         raise RuntimeError(f"Failed to parse CV sections response as JSON: {e}") from e
 
     # Guarantee all keys exist with safe defaults
